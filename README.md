@@ -1,6 +1,6 @@
 Binance orderbook + trades
 
-## Працює на postgreSQL
+## Працює на postgreSQL, fastAPI, react
 Потребує розвернути базу її налаштування у файлі backend/.env
 
 ## Запуски
