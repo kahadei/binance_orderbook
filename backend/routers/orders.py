@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from db import engine, SessionLocal, get_db
-from models import Trade, Order
+from models import Trade, Order, TradesValueByMinute
 
 router = APIRouter()
 
@@ -38,3 +38,11 @@ async def all_orders(db: AsyncSession = Depends(get_db)):
     return trades
 
 
+@router.get("/trades-by-min")
+async def trades_by_min(
+        min_filter: str,
+        db: AsyncSession = Depends(get_db)):
+    min_filter = int(min_filter)
+    results = await db.execute(select(TradesValueByMinute).order_by(TradesValueByMinute.trade_time.desc()).limit(min_filter))
+    trades = results.scalars().all()
+    return trades

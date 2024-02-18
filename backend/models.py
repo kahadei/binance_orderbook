@@ -12,6 +12,7 @@ from sqlalchemy import *
 class Base(DeclarativeBase):
     pass
 
+
 class Trade(Base):
     __tablename__ = "trades"
 
@@ -28,9 +29,22 @@ class Trade(Base):
     market_maker: Mapped[str]
 
 
+class TradesValueByMinute(Base):
+    __tablename__ = "tradesvaluebyminute"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    trade_time: Mapped[datetime] = mapped_column(unique=True)
+    sell_quantity: Mapped[float]
+    buy_quantity: Mapped[float]
+    sell_trades_count: Mapped[int]
+    sell_average_price: Mapped[float]
+    buy_trades_count: Mapped[int]
+    buy_average_price: Mapped[float]
+
+
 class Order(Base):
     __tablename__ = "orders"
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     side_type: Mapped[str]
     price: Mapped[float]
     quantity: Mapped[float]
+

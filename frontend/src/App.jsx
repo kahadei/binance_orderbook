@@ -2,12 +2,12 @@ import {useEffect, useState} from 'react'
 import Loader from "./components/UI/Loader.jsx";
 import './App.css'
 import useFetch from "./hooks/useFetch.jsx";
-import { Chart } from "react-google-charts";
+import {Chart} from "react-google-charts";
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
+import CryptoBar from "./components/Charts/CryptoBar.jsx"
 
 function App() {
     const [trades, setTrades] = useState([]);
@@ -20,7 +20,7 @@ function App() {
             get('trades')
                 .then(data => {
                     for (let trade of data) {
-                        trade.trade_time = new Date(trade.trade_time);
+                        trade.event_time = new Date(trade.event_time);
                     }
                     setTrades(data);
                 })
@@ -44,10 +44,11 @@ function App() {
         <Container>
 
             <div>
-                <a href="https://react.dev" target="_blank">
-                    <Loader/>
-                </a>
+                <Loader/>
             </div>
+            <Row>
+                <CryptoBar/>
+            </Row>
             <Row>
                 <Col xs={3} md={3}>
                     <Table responsive>
@@ -71,7 +72,7 @@ function App() {
                         </tbody>
                     </Table>
                 </Col>
-                <Col  xs={3} md={3}>
+                <Col xs={3} md={3}>
                     <Table responsive>
                         <thead>
                         <tr>
@@ -92,7 +93,7 @@ function App() {
                         </tbody>
                     </Table>
                 </Col>
-                <Col  xs={6} md={6}>
+                <Col xs={6} md={6}>
                     <Table responsive>
                         <thead>
                         <tr>
@@ -111,7 +112,7 @@ function App() {
                                 <td>{trade.symbol}</td>
                                 <td>{trade.price}</td>
                                 <td>{trade.quantity}</td>
-                                <td>{trade.trade_time.getHours()}:{trade.trade_time.getMinutes()}:{trade.trade_time.getSeconds()}</td>
+                                <td>{trade.event_time.getHours()}:{trade.event_time.getMinutes()}:{trade.event_time.getSeconds()}</td>
                                 <td>{trade.market_maker}</td>
                             </tr>)
                         })}
@@ -119,6 +120,7 @@ function App() {
                     </Table>
                 </Col>
             </Row>
+
         </Container>)
 }
 
