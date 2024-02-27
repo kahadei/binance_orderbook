@@ -26,7 +26,7 @@ export default function CryptoBar() {
     const [trade_by_min, setTradesByMin] = useState([]);
     const [trades_sum, setTradeSum] = useState([]);
     const [averPrice, setAverPrice] = useState(0);
-    const {get} = useFetch('http://127.0.0.1:8000/');
+    const {get} = useFetch('https://manhattan.foundation/');
 
     useEffect(() => {
         let interval = setInterval(() => {
