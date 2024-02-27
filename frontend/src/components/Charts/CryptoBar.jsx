@@ -105,8 +105,8 @@ export default function CryptoBar() {
                 <Tooltip/>
                 <Legend/>
                 <ReferenceLine y={0} stroke="#000"/>
-                <Bar dataKey="buy_quantity" fill="#8884d8" stackId="stack"/>
-                <Bar dataKey="sell_quantity" fill="#82ca9d" stackId="stack"/>
+                <Bar dataKey="buy_quantity" fill="#8884d8" name="Buy by min" stackId="stack"/>
+                <Bar dataKey="sell_quantity" fill="#82ca9d" name="Sell by min" stackId="stack"/>
             </BarChart>
             <LineChart width={1200} height={400} data={trade_by_min}>
                 <XAxis dataKey="trade_time"/>
@@ -114,7 +114,7 @@ export default function CryptoBar() {
                 <Tooltip/>
                 <Legend/>
                 <CartesianGrid stroke="#eee" strokeDasharray="3 3"/>
-                <Line type="monotone" dataKey="sell_average_price" stroke="#8884d8"/>
+                <Line type="monotone" dataKey="sell_average_price" name="Sell average" stroke="#8884d8"/>
             </LineChart>
             <BarChart
                 width={1200}
@@ -132,8 +132,8 @@ export default function CryptoBar() {
                 <YAxis/>
                 <Tooltip/>
                 <Legend/>
-                <Bar dataKey="buys_sum" fill="#8884d8"/>
-                <Bar dataKey="sells_sum" fill="#82ca9d"/>
+                <Bar dataKey="buys_sum" name="Buy sum" fill="#8884d8"/>
+                <Bar dataKey="sells_sum" name="Sell sum" fill="#82ca9d"/>
             </BarChart>
         </Figure>
     )
