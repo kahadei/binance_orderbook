@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react'
 import Loader from "./components/UI/Loader.jsx";
 import './App.css'
 import useFetch from "./hooks/useFetch.jsx";
-import {Chart} from "react-google-charts";
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -19,6 +18,7 @@ function App() {
         let interval = setInterval(() => {
             get('trades')
                 .then(data => {
+                    console.log(data);
                     for (let trade of data) {
                         trade.event_time = new Date(trade.event_time);
                     }
