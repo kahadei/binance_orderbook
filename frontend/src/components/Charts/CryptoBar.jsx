@@ -27,7 +27,7 @@ export default function CryptoBar() {
     const [trades_sum, setTradeSum] = useState([]);
     const [averPrice, setAverPrice] = useState(0);
     const {get} = useFetch('http://127.0.0.1:8000/');
-    console.log(minutesFilter)
+
     useEffect(() => {
         let interval = setInterval(() => {
             let url = `trades-by-min?min_filter=${minutesFilter}`

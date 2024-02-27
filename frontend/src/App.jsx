@@ -18,7 +18,6 @@ function App() {
         let interval = setInterval(() => {
             get('trades')
                 .then(data => {
-                    console.log(data);
                     for (let trade of data) {
                         trade.event_time = new Date(trade.event_time);
                     }
@@ -42,7 +41,6 @@ function App() {
 
     return (
         <Container>
-
             <div>
                 <Loader/>
             </div>
