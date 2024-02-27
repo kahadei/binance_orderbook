@@ -11,7 +11,7 @@ import CryptoBar from "./components/Charts/CryptoBar.jsx"
 function App() {
     const [trades, setTrades] = useState([]);
     const [orders, setOrders] = useState([]);
-    const {get} = useFetch('https://manhattan.foundation/');
+    const {get} = useFetch('https://api.manhattan.foundation/');
 
 
     useEffect(() => {
