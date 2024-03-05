@@ -10,8 +10,8 @@ import {
     Tooltip,
     Legend,
     ReferenceLine,
-    ResponsiveContainer,
-    Line
+    Line,
+    ComposedChart
 } from 'recharts';
 import useFetch from "../../hooks/useFetch.jsx";
 import {Figure} from "react-bootstrap";
@@ -20,13 +20,15 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+const api_host = import.meta.env.VITE_API_HOST;
 
 export default function CryptoBar() {
     const [minutesFilter, setMinutesFilter] = useState('30');
     const [trade_by_min, setTradesByMin] = useState([]);
+    const [value_by_min, setValueByMin] = useState([]);
     const [trades_sum, setTradeSum] = useState([]);
     const [averPrice, setAverPrice] = useState(0);
-    const {get} = useFetch('https://api.manhattan.foundation/');
+    const {get} = useFetch(api_host);
 
     useEffect(() => {
         let interval = setInterval(() => {
@@ -67,6 +69,37 @@ export default function CryptoBar() {
         return () => clearInterval(interval);
     }, [get, minutesFilter])
 
+    useEffect(() => {
+        let interval = setInterval(() => {
+            let url = `values-by-min?min_filter=${minutesFilter}`
+            get(url)
+                .then(data => {
+                    let result = [];
+                    for (let val of data) {
+                        let trade_time = new Date(val.trade_time);
+                        let updated_val = {
+                            ...val, ...{
+                                trade_time: trade_time.getMinutes()
+                            }
+                        };
+                        result.push(updated_val);
+                    }
+                    let lastElement = result[0];
+                    let newLastElem = {
+                        id: lastElement.id + 1,
+                        trade_time: lastElement.trade_time + 1,
+                        quantity: 0,
+                        price: 0,
+                        num_of_trades: 0
+                    };
+                    result.unshift(newLastElem)
+                    setValueByMin(result.reverse().slice(1, ));
+                })
+                .catch(error => console.error(error))
+        }, 1000)
+        return () => clearInterval(interval);
+    }, [get, minutesFilter])
+
     return (
         <Figure>
 
@@ -75,8 +108,8 @@ export default function CryptoBar() {
                     <Col></Col>
                     <Col xs={2} md={2} lg={2}>
                         <Form.Select aria-label="Default select example"
-                            onChange={event => setMinutesFilter(event.target.value)}
-                            defaultValue={minutesFilter}
+                                     onChange={event => setMinutesFilter(event.target.value)}
+                                     defaultValue={minutesFilter}
                         >
                             <option value="30">30</option>
                             <option value="60">60</option>
@@ -107,6 +140,24 @@ export default function CryptoBar() {
                 <ReferenceLine y={0} stroke="#000"/>
                 <Bar dataKey="buy_quantity" fill="#8884d8" name="Buy by min" stackId="stack"/>
                 <Bar dataKey="sell_quantity" fill="#82ca9d" name="Sell by min" stackId="stack"/>
+            </BarChart>
+            <BarChart
+                width={1200}
+                height={400}
+                data={value_by_min}
+                margin={{
+                    top: 5,
+                    right: 10,
+                    left: 10,
+                    bottom: 5,
+                }}
+            >
+                <CartesianGrid stroke="#f5f5f5"/>
+                <XAxis dataKey="trade_time"/>
+                <YAxis/>
+                <Tooltip/>
+                <Legend/>
+                <Bar dataKey="quantity" fill="#413ea0"/>
             </BarChart>
             <LineChart width={1200} height={400} data={trade_by_min}>
                 <XAxis dataKey="trade_time"/>

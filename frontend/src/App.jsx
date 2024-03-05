@@ -8,11 +8,12 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CryptoBar from "./components/Charts/CryptoBar.jsx"
 
+const api_host = import.meta.env.VITE_API_HOST;
+
 function App() {
     const [trades, setTrades] = useState([]);
     const [orders, setOrders] = useState([]);
-    const {get} = useFetch('https://api.manhattan.foundation/');
-
+    const {get} = useFetch(api_host);
 
     useEffect(() => {
         let interval = setInterval(() => {
@@ -62,10 +63,10 @@ function App() {
                         {orders.filter(order => order.side_type === "asks")
                             .map(order => {
                                 return (<tr>
-                                    <td>{order.side_type}</td>
-                                    <td>{order.price}</td>
-                                    <td>{order.quantity}</td>
-                                </tr>)
+                                            <td>{order.side_type}</td>
+                                            <td>{order.price}</td>
+                                            <td>{order.quantity}</td>
+                                        </tr>)
 
                             })}
                         </tbody>

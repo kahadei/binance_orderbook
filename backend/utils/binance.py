@@ -11,7 +11,42 @@ import asyncio
 import websockets
 from pprint import pprint
 from db import engine, SessionLocal
-from models import Trade, Order, TradesValueByMinute
+from models import Trade, Order, TradesValueByMinute, ValueStat
+
+
+async def get_values():
+    while True:
+        async with websockets.connect('wss://stream.binance.com:9443/ws/btcusdt@kline_1m') as ws:
+            async with SessionLocal() as session:
+                while True:
+                    if ws.closed:
+                        print("CONNECTION IS CLOSED")
+                        break
+                    try:
+                        message = await ws.recv()
+                        data = json.loads(message)
+
+                        if data.get('k')['x']:
+                            start_time = datetime.fromtimestamp(data.get('k')['t'] / 1000).replace(second=0,
+                                                                                                   microsecond=0)
+                            stop_time = datetime.fromtimestamp(data.get('k')['T'] / 1000).replace(microsecond=0)
+                            vol = data.get('k')['v']
+                            num_of_trades = data.get('k')['n']
+                            close_price = data.get('k')['c']
+                            val_stat = ValueStat()
+                            val_stat.trade_time = start_time
+                            val_stat.quantity = float(vol)
+                            val_stat.num_of_trades = int(num_of_trades)
+                            val_stat.price = float(close_price)
+                            async with session.begin():
+                                session.add(val_stat)
+                                await session.flush()
+                                await session.refresh(val_stat)
+                        else:
+                            continue
+                    except Exception as e:
+                        print(e)
+                        exit()
 
 
 async def trade_by_min(time, trade_data):
@@ -48,19 +83,11 @@ async def trade_by_min(time, trade_data):
                     new_average_price = prev_average_price + price
                     trade_time_obj.sell_average_price = new_average_price
 
-                    # prev_trades_count = trade_time_obj.sell_trades_count
-                    # new_trades_count = prev_trades_count + 1
-                    # trade_time_obj.sell_trades_count = new_trades_count
-
                     trade_time_obj.sell_average_price = price
                 elif side == "BUY":
                     prev_buy_quantity = trade_time_obj.buy_quantity
                     new_quantity = prev_buy_quantity + quantity
                     trade_time_obj.buy_quantity = new_quantity
-
-                    # prev_average_price = trade_time_obj.buy_average_price
-                    # new_average_price = prev_average_price + price
-                    # trade_time_obj.sell_average_price = new_average_price
 
                     prev_trades_count = trade_time_obj.buy_trades_count
                     new_trades_count = prev_trades_count + 1
@@ -163,11 +190,11 @@ async def get_orders():
 async def main():
     task1 = asyncio.create_task(get_trades())
     task2 = asyncio.create_task(get_orders())
-    # task3 = asyncio.create_task(trade_by_min())
+    task3 = asyncio.create_task(get_values())
 
     await task1
     await task2
-    # await task3
+    await task3
 
 
 if __name__ == "__main__":

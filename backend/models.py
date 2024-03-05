@@ -48,3 +48,11 @@ class Order(Base):
     price: Mapped[float]
     quantity: Mapped[float]
 
+
+class ValueStat(Base):
+    __tablename__ = "statvaluebymin"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    trade_time: Mapped[datetime] = mapped_column(unique=True)
+    quantity: Mapped[float]
+    num_of_trades: Mapped[int]
+    price: Mapped[float]
