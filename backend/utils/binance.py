@@ -189,11 +189,11 @@ async def get_orders():
 
 async def main():
     task1 = asyncio.create_task(get_trades())
-    task2 = asyncio.create_task(get_orders())
+    # task2 = asyncio.create_task(get_orders())
     task3 = asyncio.create_task(get_values())
 
     await task1
-    await task2
+    # await task2
     await task3
 
 
